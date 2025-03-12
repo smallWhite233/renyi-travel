@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # 原有微服务
+  user-service:
+    build: ./user_service
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=mysql-service
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DB=user_db
+    depends_on:
+      - mysql-service
+      - redis-service
+    networks:
+      - microservices-net
+
+  product-service:
+    build: ./product_service
+    networks:
+      - microservices-net
+
+  api-gateway:
+    build: ./api_gateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - user-service
+      - product-service
+    networks:
+      - microservices-net
+
+  # 新增基础设施服务
+  mysql-service:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: user_db
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d  # 可挂载自定义配置
+    ports:
+      - "3306:3306"
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  redis-service:
+    image: redis:7.0-alpine
+    command: redis-server --requirepass your_redis_password
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - microservices-net
+
+  rabbitmq-service:
+    image: rabbitmq:3.11-management
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: adminpassword
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"  # AMQP协议端口
+      - "15672:15672" # 管理界面端口
+    networks:
+      - microservices-net
+
+# 数据卷声明
+volumes:
+  mysql-data:
+  redis-data:
+  rabbitmq-data:
+
+# 自定义网络配置
+networks:
+  microservices-net:
+    driver: bridge
