@@ -1,10 +1,23 @@
 # prod-requirements.txt
-flask==3.1.0
-gunicorn==20.1.0
-gevent==21.12.0
-requests==2.27.1
-python-consul==2.1.1
+flask==3.1.0              # Web 框架核心
+python-dotenv==0.19.2     # 环境变量管理 读取 .env 文件
+gunicorn==20.1.0          # WSGI 服务器
+gevent==21.12.0           # 高性能的 Python 网络库
+requests==2.27.1          # HTTP 请求库
+python-consul==2.1.1      # Consul 服务发现集成
+pydantic==1.9.0           # 数据模型验证
 redis==4.5.5
-sentry-sdk[flask]==1.5.12
-opentelemetry-api==1.12.0
-opentelemetry-sdk==1.12.0
+
+sentry-sdk[flask]==1.5.12 # 错误监控
+opentelemetry-api==1.12.0 # 分布式追踪
+opentelemetry-sdk==1.12.0 # 分布式追踪
+opentelemetry-instrumentation-requests==0.24.0 # 分布式追踪
+opentelemetry-instrumentation-flask==0.24.0    # 分布式追踪
+python-json-logger==2.0.4        # 结构化日志输出
+
+### 开发/测试依赖
+pytest==7.1.2            # 单元测试框架
+pytest-cov==3.0.0        # 测试覆盖率
+requests-mock==1.9.3     # HTTP 请求模拟
+fakeredis==1.7.1         # Redis 测试模拟
+debugpy==1.6.0           # VSCode 远程调试
