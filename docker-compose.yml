@@ -4,6 +4,8 @@ services:
   # 原有微服务
   user-service:
     build: ./user_service
+    ports:
+      - "5001:5001"
     environment:
       - FLASK_ENV=development
       - MYSQL_HOST=mysql-service
@@ -18,6 +20,33 @@ services:
 
   product-service:
     build: ./product_service
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=mysql-service
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DB=product_db
+    depends_on:
+      - mysql-service
+      - redis-service
+    networks:
+      - microservices-net
+  
+  order-service:
+    build: ./order_service
+    ports:
+      - "5003:5003"
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=mysql-service
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DB=order_db
+    depends_on:
+      - mysql-service
+      - redis-service
     networks:
       - microservices-net
 
@@ -28,6 +57,7 @@ services:
     depends_on:
       - user-service
       - product-service
+      - order-service
     networks:
       - microservices-net
 
@@ -40,6 +70,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql/conf.d:/etc/mysql/conf.d  # 可挂载自定义配置
+      - ./mysql/initdb:/docker-entrypoint-initdb.d  # 挂载初始化脚本
     ports:
       - "3306:3306"
     networks:
