@@ -1,0 +1,26 @@
+[mysqld]
+# Custom MySQL configurations
+
+# Set the default storage engine
+default-storage-engine=INNODB
+
+# Set the maximum allowed packet size
+max_allowed_packet=64M
+
+# Set the maximum number of connections
+max_connections=200
+
+# Enable slow query log
+slow_query_log=1
+slow_query_log_file=/var/log/mysql/slow.log
+long_query_time=2
+
+# Character set and collation
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+
+# Buffer pool size (adjust based on available memory)
+innodb_buffer_pool_size=1G
+
+# Log file size (adjust based on available disk space)
+innodb_log_file_size=256M

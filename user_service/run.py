@@ -15,22 +15,22 @@ def health_check():
 
 def register_to_consul():
     consul_client = Consul(host=os.getenv('CONSUL_HOST', 'consul'))
-    service_id = f"order-service-{os.getenv('PORT', 5003)}"
+    service_id = f"user-service-{os.getenv('PORT', 5001)}"
     consul_client.agent.service.register(
-        name='order-service',
+        name='user-service',
         service_id=service_id,
-        address='order-service',  # Docker服务名
-        port=int(os.getenv('PORT', 5003)),
+        address='user-service',  # Docker服务名
+        port=int(os.getenv('PORT', 5001)),
         check={
-            "HTTP": f"http://order-service:{os.getenv('PORT', 5003)}/health",
+            "HTTP": f"http://user-service:{os.getenv('PORT', 5001)}/health",
             "Interval": "10s"
         }
     )
 
 if __name__ == "__main__":
-    register_to_consul()  # Ensure this function is called
+    register_to_consul()
     if config == 'development':
         app.run(debug=True)
     else:
         from werkzeug.serving import run_simple
-        run_simple('0.0.0.0', 5003, app)
+        run_simple('0.0.0.0', 5001, app)

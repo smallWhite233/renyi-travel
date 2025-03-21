@@ -10,15 +10,12 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 设置环境变量
-ENV CONSUL_HOST=consul
-ENV PORT=5003
-
 # Make port 5000 available to the world outside this container
-EXPOSE 5003
+EXPOSE 5002
 
 # Define environment variable
 ENV FLASK_APP wsgi.py
+ENV PYTHONPATH /app:$PYTHONPATH
 
 # Run app.py when the container launches
-CMD ["gunicorn", "--bind", "0.0.0.0:5003", "wsgi:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5002", "wsgi:app"]

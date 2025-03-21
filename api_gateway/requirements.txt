@@ -1,0 +1,27 @@
+### 核心依赖
+flask==3.1.0             # Web 框架核心
+python-dotenv==1.0.1    # 环境变量管理
+requests==2.27.1         # HTTP 请求转发
+pyyaml==6.0              # 配置文件解析
+python-consul==1.1.0     # Consul 服务发现集成
+pydantic==1.9.0          # 数据模型验证
+redis==5.2.1             # 缓存/速率限制存储
+
+### 可选扩展
+opentelemetry-api==1.12.0        # 分布式追踪
+opentelemetry-sdk==1.12.0
+opentelemetry-instrumentation-flask==0.33b0
+flask-cors==3.0.10               # 跨域支持
+python-json-logger==2.0.4        # 结构化日志
+
+### 开发/测试依赖
+pytest==7.1.2            # 单元测试框架
+pytest-cov==3.0.0        # 测试覆盖率
+requests-mock==1.9.3     # HTTP 请求模拟
+debugpy==1.6.0           # VSCode 远程调试
+
+### 生产部署依赖
+gunicorn==23.0.0         # WSGI 服务器
+gevent==21.12.0          # 异步 worker
+psutil==5.9.0            # 系统监控
+sentry-sdk[flask]==1.5.12  # 错误追踪

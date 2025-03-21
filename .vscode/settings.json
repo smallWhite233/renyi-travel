@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./api_gateway/src",
+        "./api_gateway/src/app"
+    ]
+}

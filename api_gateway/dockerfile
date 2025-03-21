@@ -1,7 +1,49 @@
-FROM python:3.9-slim
+# 第一阶段：构建阶段（可选，用于优化镜像体积）
+FROM python:3.9-slim as builder
 
 WORKDIR /app
-COPY src/requirements.txt .
-RUN pip install -r requirements.txt
-COPY src/ .
-CMD ["python", "run.py"]
+COPY requirements.txt .
+
+# 安装构建依赖和项目依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc python3-dev && \
+    pip install --user -r requirements.txt
+
+# ----------------------------
+# 第二阶段：生产镜像
+FROM python:3.9-slim
+
+# 设置容器元数据
+LABEL description="API Gateway for Microservices"
+
+# 安装运行时依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# 设置工作目录
+WORKDIR /app
+
+# 从构建阶段复制已安装的依赖
+COPY --from=builder /root/.local /root/.local
+COPY src/ ./
+COPY wsgi.py ./  
+
+# 确保 PATH 包含用户安装目录
+ENV PATH=/root/.local/bin:$PATH
+
+# 设置环境变量
+ENV FLASK_APP=wsgi.py
+ENV FLASK_ENV=production
+ENV CONSUL_HOST=consul
+ENV PORT=5000
+
+# 暴露端口
+EXPOSE 5000
+
+# 健康检查（可选）
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD curl -f http://localhost:5000/health || exit 1
+
+# 启动命令（推荐使用 Gunicorn）
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "--access-logfile", "-", "wsgi:app"]

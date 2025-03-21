@@ -1,12 +1,19 @@
-version: '3.8'
-
 services:
+# Consul 服务发现
+  consul:
+    image: consul:1.13
+    ports:
+      - "8500:8500"
+    networks:
+      - microservices-net
   # 原有微服务
   user-service:
     build: ./user_service
     ports:
       - "5001:5001"
     environment:
+      - PORT=5001
+      - CONSUL_HOST=consul
       - FLASK_ENV=development
       - MYSQL_HOST=mysql-service
       - MYSQL_USER=root
@@ -23,6 +30,8 @@ services:
     ports:
       - "5002:5002"
     environment:
+      - PORT=5002
+      - CONSUL_HOST=consul
       - FLASK_ENV=development
       - MYSQL_HOST=mysql-service
       - MYSQL_USER=root
@@ -39,6 +48,8 @@ services:
     ports:
       - "5003:5003"
     environment:
+      - PORT=5003
+      - CONSUL_HOST=consul
       - FLASK_ENV=development
       - MYSQL_HOST=mysql-service
       - MYSQL_USER=root
@@ -53,11 +64,11 @@ services:
   api-gateway:
     build: ./api_gateway
     ports:
-      - "5000:5000"
+      - "8000:5000"
+    environment:
+      - CONSUL_HOST=consul
     depends_on:
-      - user-service
-      - product-service
-      - order-service
+      - consul
     networks:
       - microservices-net
 
@@ -65,7 +76,9 @@ services:
   mysql-service:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: root  # Ensure this is set
+      MYSQL_USER: app_user                  # 创建普通用户
+      MYSQL_PASSWORD: app_user              # 普通用户密码
       MYSQL_DATABASE: user_db
     volumes:
       - mysql-data:/var/lib/mysql
@@ -83,7 +96,7 @@ services:
 
   redis-service:
     image: redis:7.0-alpine
-    command: redis-server --requirepass your_redis_password
+    command: redis-server --requirepass redispassword
     volumes:
       - redis-data:/data
     ports:

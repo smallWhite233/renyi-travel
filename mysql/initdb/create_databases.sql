@@ -1,4 +1,4 @@
---Create the databases
+-- Create the databases
 CREATE DATABASE IF NOT EXISTS user_db;
 CREATE DATABASE IF NOT EXISTS product_db;
 CREATE DATABASE IF NOT EXISTS order_db;

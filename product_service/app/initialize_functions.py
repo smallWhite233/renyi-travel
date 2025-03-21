@@ -6,7 +6,7 @@ from app.db.db import db
 
 def initialize_route(app: Flask):
     with app.app_context():
-        app.register_blueprint(main_bp, url_prefix='/order/api/v1/')
+        app.register_blueprint(main_bp, url_prefix='/product/api/v1/main')
 
 
 def initialize_db(app: Flask):

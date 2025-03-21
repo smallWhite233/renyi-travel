@@ -4,7 +4,7 @@ class BaseConfig:
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'your-secret-key'
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:rootpassword@mysql-service/order_db'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:rootpassword@mysql-service/product_db'
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
@@ -14,12 +14,12 @@ class TestingConfig(BaseConfig):
     """Testing configuration."""
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:rootpassword@mysql-service/order_db'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:rootpassword@mysql-service/product_db'
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:rootpassword@mysql-service/order_db'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:rootpassword@mysql-service/product_db'
 
 
 def get_config_by_name(config_name):
